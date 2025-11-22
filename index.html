@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اتحاد نورزهی | نمونه‌کارها و خدمات</title>
+    <meta name="theme-color" content="#064e3b">
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Vazirmatn', 'sans-serif'], quran: ['Amiri', 'serif'] },
+                    colors: {
+                        primary: { 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' },
+                        sand: { 500: '#f59e0b', 600: '#d97706' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #fafaf9; }
+        .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #e5e7eb; }
+        .palm-bg { 
+            background-image: url('https://images.unsplash.com/photo-1545397242-20058b312871?q=80&w=1080&auto=format&fit=crop');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        .play-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; background: rgba(0,0,0,0.6); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white; pointer-events: none;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800 pb-20 md:pb-0">
+
+    <div class="bg-[#064e3b] text-white text-center py-3 sticky top-0 z-50 shadow-md">
+        <div class="font-quran text-xl font-bold mb-1">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+        <div class="text-xs text-green-200 font-quran">«وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ»</div>
+    </div>
+
+    <div id="app">
+        
+        <header class="transition-all duration-300 sticky top-[66px] z-40" :class="scrolled ? 'glass py-2' : 'bg-transparent py-4'">
+            <div class="container mx-auto px-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white shadow-lg">
+                        <i data-lucide="palmtree"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl transition-colors" :class="scrolled ? 'text-gray-800' : 'text-white'">اتحاد نورزهی</h1>
+                        <p class="text-[10px]" :class="scrolled ? 'text-gray-500' : 'text-gray-200'">تخصصی‌ترین مرکز حفاری</p>
+                    </div>
+                </div>
+                <a :href="whatsappLink" class="hidden md:flex bg-white text-green-700 px-4 py-2 rounded-full font-bold shadow hover:bg-green-50 items-center gap-2">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> تماس سریع
+                </a>
+            </div>
+        </header>
+
+        <section class="relative min-h-[85vh] flex items-center justify-center -mt-[126px] pt-[126px] palm-bg">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-[#fafaf9]"></div>
+            
+            <div class="container mx-auto px-4 relative z-10 text-center text-white">
+                <h2 class="text-4xl md:text-6xl font-black mb-4 drop-shadow-lg">آبادانی نخلستان‌ها<br><span class="text-green-400">تخصص ماست</span></h2>
+                <p class="text-lg mb-8 opacity-90 max-w-xl mx-auto">اجرای پروژه‌های حفاری چاه عمیق و نیمه عمیق با ضمانت آبدهی و سرعت بالا</p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button @click="scrollToId('calculator')" class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5"></i> محاسبه هزینه
+                    </button>
+                    <button @click="scrollToId('portfolio')" class="bg-white/20 backdrop-blur hover:bg-white/30 text-white px-8 py-4 rounded-xl font-bold border border-white/30 flex items-center justify-center gap-2">
+                        <i data-lucide="images" class="w-5 h-5"></i> نمونه کارها
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-12 px-4 container mx-auto">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800">انواع خدمات حفاری</h3>
+                <div class="w-16 h-1 bg-green-500 mx-auto mt-2 rounded-full"></div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div @click="selectService('tazani')" class="bg-white p-6 rounded-2xl shadow-lg border-b-4 border-green-500 cursor-pointer hover:-translate-y-1 transition-transform group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="sprout" class="w-7 h-7"></i></div>
+                        <div>
+                            <h3 class="font-bold text-xl">حفاری تازانی</h3>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">مخصوص نخلستان</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">حفاری سریع و دقیق برای دسترسی به آب‌های سطحی و نیمه عمیق، ایده‌آل برای آبیاری قطره‌ای.</p>
+                    <div class="text-green-700 font-bold text-lg border-t pt-4 border-dashed">پایه: ۱۲,۰۰۰,۰۰۰ تومان</div>
+                </div>
+
+                <div @click="selectService('peshte')" class="bg-white p-6 rounded-2xl shadow-lg border-b-4 border-yellow-500 cursor-pointer hover:-translate-y-1 transition-transform group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="mountain" class="w-7 h-7"></i></div>
+                        <div>
+                            <h3 class="font-bold text-xl">حفاری پشته</h3>
+                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">قدرت نفوذ بالا</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">عبور از لایه‌های سخت سنگی و رسیدن به سفره‌های آب پایدار و عمیق با دستگاه‌های سنگین.</p>
+                    <div class="text-yellow-600 font-bold text-lg border-t pt-4 border-dashed">پایه: ۱۶,۰۰۰,۰۰۰ تومان</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="py-12 bg-gray-50 border-y border-gray-200">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-10">
+                    <h3 class="text-2xl font-black text-gray-800 flex items-center justify-center gap-2">
+                        <i data-lucide="camera" class="text-green-600"></i>
+                        نمونه کارهای اجرایی
+                    </h3>
+                    <p class="text-gray-500 text-sm mt-2">بخشی از پروژه‌های احیای نخلستان‌های بلوچستان</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div v-for="(item, index) in portfolio" :key="index" class="bg-white p-2 rounded-2xl shadow-sm hover:shadow-lg transition-all group">
+                        <div class="relative rounded-xl overflow-hidden aspect-video bg-gray-200">
+                            <video v-if="item.type === 'video'" controls class="w-full h-full object-cover" :poster="item.poster">
+                                <source :src="item.src" type="video/mp4">
+                                مرورگر شما ویدیو را پشتیبانی نمی‌کند.
+                            </video>
+                            
+                            <img v-else :src="item.src" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
+                            
+                            <div class="absolute bottom-0 right-0 bg-black/60 text-white text-xs px-3 py-1 rounded-tl-lg">
+                                {{ item.caption }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="calculator" class="bg-[#1c1917] text-white py-16 rounded-t-[40px] shadow-2xl -mt-6 relative z-10">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-8 text-green-400 flex justify-center items-center gap-2">
+                    <i data-lucide="calculator"></i>
+                    محاسبه آنلاین هزینه
+                </h2>
+                
+                <div class="flex bg-[#292524] rounded-xl p-1 mb-8 max-w-md mx-auto">
+                    <button @click="type='tazani'" class="flex-1 py-3 rounded-lg transition-all font-bold" :class="type==='tazani' ? 'bg-green-600 text-white shadow' : 'text-gray-400'">تازانی</button>
+                    <button @click="type='peshte'" class="flex-1 py-3 rounded-lg transition-all font-bold" :class="type==='peshte' ? 'bg-yellow-600 text-white shadow' : 'text-gray-400'">پشته</button>
+                </div>
+
+                <div class="bg-[#292524] p-6 rounded-2xl max-w-2xl mx-auto border border-gray-700">
+                    <div class="flex justify-between mb-4">
+                        <span class="text-gray-300">عمق حفاری</span>
+                        <span class="text-green-400 font-mono font-bold text-xl">{{ depth }} متر</span>
+                    </div>
+                    <input type="range" v-model="depth" min="1" max="200" class="w-full h-4 bg-gray-600 rounded-lg appearance-none accent-green-500 mb-2">
+                    <div class="flex justify-between text-xs text-gray-500"><span>1 متر</span><span>200 متر</span></div>
+                    
+                    <div class="mt-8 text-center bg-black/30 p-4 rounded-xl border border-white/5">
+                        <div class="text-gray-400 text-sm mb-1">برآورد قیمت نهایی</div>
+                        <div class="text-4xl font-black my-2 text-white">{{ formattedPrice }}</div>
+                        <div class="text-gray-500 text-sm">تومان</div>
+                    </div>
+
+                    <a :href="whatsappOrderLink" class="block w-full mt-6 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 py-4 rounded-xl text-center font-bold transition flex justify-center gap-2 items-center shadow-lg shadow-green-900/50">
+                        <i data-lucide="check-circle"></i>
+                        تایید و هماهنگی در واتساپ
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4 text-center">
+                <h3 class="text-2xl font-black text-gray-800 mb-2 flex items-center justify-center gap-2">
+                    <i data-lucide="users" class="text-green-600"></i>
+                    هیئت مدیره
+                </h3>
+                <p class="text-gray-500 text-sm mb-10">برادران نورزهی، با تجربه دیرین در صنعت حفاری</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                    <div v-for="member in teamMembers" :key="member.name" class="flex flex-col items-center group">
+                        <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-gray-100 shadow-md mb-3 group-hover:border-green-500 transition-all duration-300">
+                            <img :src="member.image" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="font-bold text-gray-800 text-sm md:text-base">{{ member.name }}</h4>
+                        <span class="text-xs text-green-600 mt-1">عضو هیئت مدیره</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-[#1c1917] text-gray-400 py-8 text-center text-xs border-t border-gray-800 pb-24 md:pb-8">
+            <p class="mb-2">© ۲۰۲۵ اتحاد نورزهی | تمامی حقوق محفوظ است.</p>
+            <p class="flex justify-center items-center gap-1">
+                طراحی و توسعه: <span class="text-gray-200 font-bold">عبدالناصر نورزهی</span>
+            </p>
+        </footer>
+
+        <nav class="fixed bottom-0 w-full bg-white/95 backdrop-blur border-t border-gray-200 flex justify-around py-3 md:hidden z-50 pb-safe text-gray-500">
+            <a href="#" class="flex flex-col items-center hover:text-green-600"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px]">خانه</span></a>
+            <div class="relative -top-5">
+                <a :href="whatsappLink" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg animate-pulse"><i data-lucide="message-circle"></i></a>
+            </div>
+            <button @click="scrollToId('calculator')" class="flex flex-col items-center hover:text-green-600"><i data-lucide="calculator" class="w-5 h-5"></i><span class="text-[10px]">هزینه</span></button>
+        </nav>
+
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, watch } = Vue;
+
+        createApp({
+            setup() {
+                const scrolled = ref(false);
+                const type = ref('tazani');
+                const depth = ref(10);
+                
+                // 📷 لیست مدیران (تصاویر شما و کاملا رنگی)
+                const teamMembers = [
+                    { name: 'عبدالخالق نورزهی', image: 'https://s6.uupload.ir/files/img_20240308_164442_nz3u.jpg' }, 
+                    { name: 'محمد صادق نورزهی', image: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-40-43-731_com.miui.gallery_htvl.png' },
+                    { name: 'عبدالستار نورزهی', image: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-24-27-944_com.miui.gallery_e1x8.png' }, 
+                    { name: 'محمد عمر نورزهی', image: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-34-33-860_com.miui.gallery_gj8f.png' },
+                    { name: 'شریف نورزهی', image: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-24-49-100_com.miui.gallery_eqvs.png' }, 
+                    { name: 'عبدالمطلب نورزهی', image: 'https://s6.uupload.ir/files/_uhdmen668_ejcw.jpg' },
+                    { name: 'حسین نورزهی', image: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-24-06-913_com.miui.gallery_6g8.png' }
+                ];
+
+                // 🎬 لیست نمونه کارها (لینک‌های جدید و اختصاصی شما)
+                const portfolio = [
+                    { type: 'image', src: 'https://s6.uupload.ir/files/10531507565545169021-e1632206098271_7mi5.jpg', caption: 'تخصصی در مناطق کویری' },
+                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-53-49-220_com.android.chrome_bidp.png', caption: 'نخلستان‌های پرآب ایرانشهر' },
+                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-54-07-391_com.android.chrome_d3xq.png', caption: 'احیای باغات خرما' },
+                    { type: 'image', src: 'https://images.unsplash.com/photo-1621535749442-9a3c0314488b?q=80&w=1000&auto=format&fit=crop', caption: 'عملیات حفاری جدید' },
+                    { type: 'image', src: 'https://images.unsplash.com/photo-1549488340-d98c56b71f2b?q=80&w=1000&auto=format&fit=crop', caption: 'لایروبی و احیا' },
+                    { type: 'image', src: 'https://images.unsplash.com/photo-1598505500880-9941a87b8d0b?q=80&w=1000&auto=format&fit=crop', caption: 'پروژه‌های موفق در جنوب' },
+                ];
+
+                const prices = { tazani: 5455000, peshte: 7273000 };
+
+                const formattedPrice = computed(() => {
+                    return (depth.value * prices[type.value]).toLocaleString('fa-IR');
+                });
+
+                const whatsappOrderLink = computed(() => {
+                    const txt = `سلام، درخواست حفاری *${type.value === 'tazani' ? 'تازانی' : 'پشته'}* به متراژ *${depth.value} متر* را دارم.\nهزینه سایت: ${formattedPrice.value} تومان.`;
+                    return `https://wa.me/989167169590?text=${encodeURIComponent(txt)}`;
+                });
+
+                onMounted(() => {
+                    lucide.createIcons();
+                    window.addEventListener('scroll', () => scrolled.value = window.scrollY > 50);
+                });
+                
+                watch(type, () => setTimeout(() => lucide.createIcons(), 50));
+
+                return {
+                    scrolled, type, depth, teamMembers, portfolio, formattedPrice,
+                    whatsappLink: 'https://wa.me/989167169590',
+                    whatsappOrderLink,
+                    selectService: (t) => { type.value = t; document.getElementById('calculator').scrollIntoView({behavior:'smooth'}); },
+                    scrollToId: (id) => document.getElementById(id).scrollIntoView({behavior:'smooth'})
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
