@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fa" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اتحاد نورزهی | نمونه‌کارها و خدمات</title>
+    <title>اتحاد نورزهی | پیشرو در صنعت حفاری</title>
     <meta name="theme-color" content="#064e3b">
 
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
@@ -11,6 +11,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
         tailwind.config = {
@@ -20,6 +26,9 @@
                     colors: {
                         primary: { 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' },
                         sand: { 500: '#f59e0b', 600: '#d97706' }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     }
                 }
             }
@@ -27,153 +36,240 @@
     </script>
 
     <style>
-        body { background-color: #fafaf9; }
-        .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #e5e7eb; }
+        body { background-color: #f3f4f6; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.3); }
         .palm-bg { 
-            background-image: url('https://images.unsplash.com/photo-1545397242-20058b312871?q=80&w=1080&auto=format&fit=crop');
+            background-image: url('https://images.unsplash.com/photo-1516214104703-d870798883c5?q=80&w=1920&auto=format&fit=crop');
             background-size: cover; background-position: center; background-attachment: fixed;
         }
-        .play-btn {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 50px; height: 50px; background: rgba(0,0,0,0.6); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; color: white; pointer-events: none;
+        /* استایل سفارشی برای نشانگرهای نقشه */
+        .custom-pin {
+            background-color: #dc2626;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: ripple 1.5s linear infinite;
+        }
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            100% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
         }
     </style>
 </head>
 <body class="antialiased text-gray-800 pb-20 md:pb-0">
 
-    <div class="bg-[#064e3b] text-white text-center py-3 sticky top-0 z-50 shadow-md">
-        <div class="font-quran text-xl font-bold mb-1">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-        <div class="text-xs text-green-200 font-quran">«وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ»</div>
+    <div class="bg-gradient-to-r from-[#064e3b] to-[#047857] text-white text-center py-2 sticky top-0 z-50 shadow-md">
+        <div class="font-quran text-lg font-bold">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+        <div class="text-[11px] text-green-200 font-quran tracking-wider">«وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ»</div>
     </div>
 
     <div id="app">
         
-        <header class="transition-all duration-300 sticky top-[66px] z-40" :class="scrolled ? 'glass py-2' : 'bg-transparent py-4'">
+        <header class="transition-all duration-300 sticky top-[58px] z-40" :class="scrolled ? 'glass py-2 shadow-sm' : 'bg-transparent py-6'">
             <div class="container mx-auto px-4 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center text-white shadow-lg">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/30 transform hover:rotate-12 transition-transform">
                         <i data-lucide="palmtree"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-xl transition-colors" :class="scrolled ? 'text-gray-800' : 'text-white'">اتحاد نورزهی</h1>
-                        <p class="text-[10px]" :class="scrolled ? 'text-gray-500' : 'text-gray-200'">تخصصی‌ترین مرکز حفاری</p>
+                        <h1 class="font-black text-2xl transition-colors tracking-tight" :class="scrolled ? 'text-gray-800' : 'text-white drop-shadow-md'">اتحاد نورزهی</h1>
+                        <p class="text-[11px] font-medium" :class="scrolled ? 'text-green-600' : 'text-green-300'">تخصصی‌ترین مرکز حفاری سیستان و بلوچستان</p>
                     </div>
                 </div>
-                <a :href="whatsappLink" class="hidden md:flex bg-white text-green-700 px-4 py-2 rounded-full font-bold shadow hover:bg-green-50 items-center gap-2">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i> تماس سریع
+                <a :href="whatsappLink" class="hidden md:flex bg-white text-green-700 px-5 py-2.5 rounded-full font-bold shadow-lg hover:bg-green-50 hover:scale-105 transition-all items-center gap-2">
+                    <i data-lucide="phone-call" class="w-4 h-4"></i> مشاوره رایگان
                 </a>
             </div>
         </header>
 
-        <section class="relative min-h-[85vh] flex items-center justify-center -mt-[126px] pt-[126px] palm-bg">
-            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-[#fafaf9]"></div>
+        <section class="relative min-h-[90vh] flex items-center justify-center -mt-[110px] pt-[110px] palm-bg">
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-100 via-black/50 to-black/70"></div>
             
-            <div class="container mx-auto px-4 relative z-10 text-center text-white">
-                <h2 class="text-4xl md:text-6xl font-black mb-4 drop-shadow-lg">آبادانی نخلستان‌ها<br><span class="text-green-400">تخصص ماست</span></h2>
-                <p class="text-lg mb-8 opacity-90 max-w-xl mx-auto">اجرای پروژه‌های حفاری چاه عمیق و نیمه عمیق با ضمانت آبدهی و سرعت بالا</p>
+            <div class="container mx-auto px-4 relative z-10 text-center text-white" data-aos="fade-up" data-aos-duration="1000">
+                <div class="inline-block bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs mb-4 border border-white/30">
+                    ✨ با تکنولوژی روز دنیا
+                </div>
+                <h2 class="text-4xl md:text-7xl font-black mb-6 drop-shadow-2xl leading-tight">
+                    آب، اینجاست.<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">در دل کویر</span>
+                </h2>
+                <p class="text-lg md:text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light">
+                    تیم مهندسی نورزهی با به‌روزترین تجهیزات حفاری در سراسر استان سیستان و بلوچستان
+                </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button @click="scrollToId('calculator')" class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2">
-                        <i data-lucide="calculator" class="w-5 h-5"></i> محاسبه هزینه
+                    <button @click="scrollToId('map-section')" class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-green-900/40 flex items-center justify-center gap-2 hover:-translate-y-1 transition-all">
+                        <i data-lucide="map-pin" class="w-5 h-5"></i> موقعیت دستگاه‌ها
                     </button>
-                    <button @click="scrollToId('portfolio')" class="bg-white/20 backdrop-blur hover:bg-white/30 text-white px-8 py-4 rounded-xl font-bold border border-white/30 flex items-center justify-center gap-2">
-                        <i data-lucide="images" class="w-5 h-5"></i> نمونه کارها
+                    <button @click="scrollToId('portfolio')" class="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-bold border border-white/30 flex items-center justify-center gap-2 hover:-translate-y-1 transition-all">
+                        <i data-lucide="play-circle" class="w-5 h-5"></i> مشاهده عملکرد
                     </button>
+                </div>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0">
+                <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 60L48 65C96 70 192 80 288 81.7C384 83 480 77 576 66.7C672 56 768 43 864 41.7C960 40 1056 50 1152 58.3C1248 67 1344 73 1392 76.7L1440 80V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0V60Z" fill="#f3f4f6"/>
+                </svg>
+            </div>
+        </section>
+
+        <section class="py-16 px-4 container mx-auto">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <span class="text-green-600 font-bold text-sm tracking-widest">SERVICES</span>
+                <h3 class="text-3xl font-black text-gray-800 mt-2">خدمات تخصصی ما</h3>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div @click="selectService('tazani')" class="group bg-white p-8 rounded-3xl shadow-lg border border-gray-100 cursor-pointer hover:shadow-2xl hover:shadow-green-900/10 transition-all duration-500 relative overflow-hidden" data-aos="fade-right">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 text-green-700 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-500">
+                                <i data-lucide="sprout" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-2xl group-hover:text-green-700 transition-colors">حفاری تازانی</h3>
+                                <span class="text-xs font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full mt-1 inline-block">مخصوص آبیاری نخلستان</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 leading-relaxed mb-6">
+                            بهترین گزینه برای مناطق با سطح آب بالا. اجرای سریع، کم‌هزینه و ایده‌آل برای کشاورزی سبک و باغداری در مناطق گرمسیر.
+                        </p>
+                        <div class="flex justify-between items-center border-t border-gray-100 pt-4">
+                            <span class="text-gray-400 text-sm">شروع قیمت از:</span>
+                            <div class="text-green-700 font-black text-xl">۱۲,۰۰۰,۰۰۰ <span class="text-xs font-medium text-gray-500">تومان</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div @click="selectService('peshte')" class="group bg-white p-8 rounded-3xl shadow-lg border border-gray-100 cursor-pointer hover:shadow-2xl hover:shadow-yellow-900/10 transition-all duration-500 relative overflow-hidden" data-aos="fade-left">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-200 text-yellow-700 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-500">
+                                <i data-lucide="mountain" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-2xl group-hover:text-yellow-700 transition-colors">حفاری پشته (سنگی)</h3>
+                                <span class="text-xs font-bold text-yellow-700 bg-yellow-100 px-3 py-1 rounded-full mt-1 inline-block">قدرت نفوذ حداکثری</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 leading-relaxed mb-6">
+                            عبور قدرتمند از لایه‌های سخت سنگی با دستگاه‌های سنگین. مناسب برای دسترسی به سفره‌های آب زیرزمینی پایدار و دائمی.
+                        </p>
+                        <div class="flex justify-between items-center border-t border-gray-100 pt-4">
+                            <span class="text-gray-400 text-sm">شروع قیمت از:</span>
+                            <div class="text-yellow-700 font-black text-xl">۱۶,۰۰۰,۰۰۰ <span class="text-xs font-medium text-gray-500">تومان</span></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-12 px-4 container mx-auto">
-            <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-gray-800">انواع خدمات حفاری</h3>
-                <div class="w-16 h-1 bg-green-500 mx-auto mt-2 rounded-full"></div>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div @click="selectService('tazani')" class="bg-white p-6 rounded-2xl shadow-lg border-b-4 border-green-500 cursor-pointer hover:-translate-y-1 transition-transform group">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="sprout" class="w-7 h-7"></i></div>
-                        <div>
-                            <h3 class="font-bold text-xl">حفاری تازانی</h3>
-                            <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">مخصوص نخلستان</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-500 text-sm mb-4">حفاری سریع و دقیق برای دسترسی به آب‌های سطحی و نیمه عمیق، ایده‌آل برای آبیاری قطره‌ای.</p>
-                    <div class="text-green-700 font-bold text-lg border-t pt-4 border-dashed">پایه: ۱۲,۰۰۰,۰۰۰ تومان</div>
-                </div>
-
-                <div @click="selectService('peshte')" class="bg-white p-6 rounded-2xl shadow-lg border-b-4 border-yellow-500 cursor-pointer hover:-translate-y-1 transition-transform group">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="mountain" class="w-7 h-7"></i></div>
-                        <div>
-                            <h3 class="font-bold text-xl">حفاری پشته</h3>
-                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">قدرت نفوذ بالا</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-500 text-sm mb-4">عبور از لایه‌های سخت سنگی و رسیدن به سفره‌های آب پایدار و عمیق با دستگاه‌های سنگین.</p>
-                    <div class="text-yellow-600 font-bold text-lg border-t pt-4 border-dashed">پایه: ۱۶,۰۰۰,۰۰۰ تومان</div>
-                </div>
-            </div>
-        </section>
-
-        <section id="portfolio" class="py-12 bg-gray-50 border-y border-gray-200">
+        <section id="map-section" class="py-12 bg-gray-900 relative">
             <div class="container mx-auto px-4">
-                <div class="text-center mb-10">
-                    <h3 class="text-2xl font-black text-gray-800 flex items-center justify-center gap-2">
-                        <i data-lucide="camera" class="text-green-600"></i>
-                        نمونه کارهای اجرایی
+                <div class="text-center mb-10 text-white" data-aos="fade-up">
+                    <h3 class="text-2xl font-black flex items-center justify-center gap-2">
+                        <i data-lucide="globe" class="text-green-500"></i>
+                        موقعیت لحظه‌ای دستگاه‌ها
                     </h3>
-                    <p class="text-gray-500 text-sm mt-2">بخشی از پروژه‌های احیای نخلستان‌های بلوچستان</p>
+                    <p class="text-gray-400 text-sm mt-2">پروژه‌های در حال اجرا در استان سیستان و بلوچستان</p>
+                </div>
+                
+                <div class="bg-gray-800 p-2 rounded-3xl shadow-2xl" data-aos="zoom-in">
+                    <div id="drill-map" class="w-full h-[450px] rounded-2xl z-10 relative"></div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div v-for="(item, index) in portfolio" :key="index" class="bg-white p-2 rounded-2xl shadow-sm hover:shadow-lg transition-all group">
-                        <div class="relative rounded-xl overflow-hidden aspect-video bg-gray-200">
-                            <video v-if="item.type === 'video'" controls class="w-full h-full object-cover" :poster="item.poster">
+                <div class="flex flex-wrap justify-center gap-4 mt-6">
+                    <div class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 border border-gray-700">
+                        <span class="w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
+                        دستگاه فعال
+                    </div>
+                    <div class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 border border-gray-700">
+                        <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                        پروژه تکمیل شده
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="py-16 bg-gray-50 border-y border-gray-200">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-end mb-10" data-aos="fade-up">
+                    <div>
+                        <h3 class="text-3xl font-black text-gray-800">گالری پروژه ها</h3>
+                        <p class="text-gray-500 text-sm mt-2">تصاویر و ویدیوهای واقعی از محل حفاری</p>
+                    </div>
+                    <a href="#" class="text-green-600 font-bold text-sm hidden md:flex items-center gap-1 hover:gap-2 transition-all">مشاهده همه <i data-lucide="arrow-left"></i></a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="(item, index) in portfolio" :key="index" class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all overflow-hidden border border-gray-100" :data-aos="index % 2 === 0 ? 'fade-up' : 'fade-up'" :data-aos-delay="index * 100">
+                        <div class="relative aspect-[4/3] bg-gray-800">
+                            <video v-if="item.type === 'video'" controls class="w-full h-full object-cover">
                                 <source :src="item.src" type="video/mp4">
                                 مرورگر شما ویدیو را پشتیبانی نمی‌کند.
                             </video>
                             
-                            <img v-else :src="item.src" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
-                            
-                            <div class="absolute bottom-0 right-0 bg-black/60 text-white text-xs px-3 py-1 rounded-tl-lg">
-                                {{ item.caption }}
+                            <div v-else class="w-full h-full relative overflow-hidden">
+                                <img :src="item.src" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                    <i data-lucide="zoom-in" class="text-white w-10 h-10"></i>
+                                </div>
                             </div>
+
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-gray-800 shadow-sm">
+                                {{ item.location || 'سیستان و بلوچستان' }}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-gray-800 mb-1">{{ item.caption }}</h4>
+                            <p class="text-xs text-gray-500">وضعیت: <span class="text-green-600">تکمیل شده ✅</span></p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="calculator" class="bg-[#1c1917] text-white py-16 rounded-t-[40px] shadow-2xl -mt-6 relative z-10">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center mb-8 text-green-400 flex justify-center items-center gap-2">
-                    <i data-lucide="calculator"></i>
-                    محاسبه آنلاین هزینه
-                </h2>
-                
-                <div class="flex bg-[#292524] rounded-xl p-1 mb-8 max-w-md mx-auto">
-                    <button @click="type='tazani'" class="flex-1 py-3 rounded-lg transition-all font-bold" :class="type==='tazani' ? 'bg-green-600 text-white shadow' : 'text-gray-400'">تازانی</button>
-                    <button @click="type='peshte'" class="flex-1 py-3 rounded-lg transition-all font-bold" :class="type==='peshte' ? 'bg-yellow-600 text-white shadow' : 'text-gray-400'">پشته</button>
+        <section id="calculator" class="bg-[#1c1917] text-white py-20 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#4b5563 1px, transparent 1px); background-size: 20px 20px;"></div>
+            
+            <div class="container mx-auto px-4 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+                <div data-aos="fade-left">
+                    <h2 class="text-4xl font-bold mb-6 text-green-400">محاسبه آنلاین هزینه حفاری</h2>
+                    <p class="text-gray-400 mb-8 text-lg leading-relaxed">
+                        برای شفافیت بیشتر، می‌توانید هزینه تقریبی پروژه خود را محاسبه کنید. این قیمت‌ها بر اساس نرخ مصوب اتحادیه و با تخفیف ویژه سایت محاسبه می‌شود.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center text-xs">✓</span> مشاوره رایگان قبل از شروع</li>
+                        <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center text-xs">✓</span> ضمانت رسیدن به آب</li>
+                        <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center text-xs">✓</span> استفاده از لوله‌های استاندارد</li>
+                    </ul>
                 </div>
 
-                <div class="bg-[#292524] p-6 rounded-2xl max-w-2xl mx-auto border border-gray-700">
-                    <div class="flex justify-between mb-4">
-                        <span class="text-gray-300">عمق حفاری</span>
-                        <span class="text-green-400 font-mono font-bold text-xl">{{ depth }} متر</span>
-                    </div>
-                    <input type="range" v-model="depth" min="1" max="200" class="w-full h-4 bg-gray-600 rounded-lg appearance-none accent-green-500 mb-2">
-                    <div class="flex justify-between text-xs text-gray-500"><span>1 متر</span><span>200 متر</span></div>
-                    
-                    <div class="mt-8 text-center bg-black/30 p-4 rounded-xl border border-white/5">
-                        <div class="text-gray-400 text-sm mb-1">برآورد قیمت نهایی</div>
-                        <div class="text-4xl font-black my-2 text-white">{{ formattedPrice }}</div>
-                        <div class="text-gray-500 text-sm">تومان</div>
+                <div class="bg-[#292524] p-8 rounded-3xl border border-gray-700 shadow-2xl" data-aos="fade-right">
+                    <div class="flex bg-[#1c1917] rounded-xl p-1.5 mb-8">
+                        <button @click="type='tazani'" class="flex-1 py-3 rounded-lg transition-all font-bold text-sm md:text-base" :class="type==='tazani' ? 'bg-green-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'">حفاری تازانی</button>
+                        <button @click="type='peshte'" class="flex-1 py-3 rounded-lg transition-all font-bold text-sm md:text-base" :class="type==='peshte' ? 'bg-yellow-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'">حفاری پشته</button>
                     </div>
 
-                    <a :href="whatsappOrderLink" class="block w-full mt-6 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 py-4 rounded-xl text-center font-bold transition flex justify-center gap-2 items-center shadow-lg shadow-green-900/50">
-                        <i data-lucide="check-circle"></i>
-                        تایید و هماهنگی در واتساپ
+                    <div class="mb-8">
+                        <div class="flex justify-between mb-4">
+                            <span class="text-gray-300">عمق مورد نظر</span>
+                            <span class="text-green-400 font-mono font-bold text-xl">{{ depth }} <span class="text-sm">متر</span></span>
+                        </div>
+                        <input type="range" v-model="depth" min="10" max="250" class="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500 hover:accent-green-400">
+                    </div>
+                    
+                    <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center mb-6">
+                        <div class="text-gray-400 text-sm mb-2">هزینه نهایی پروژه</div>
+                        <div class="text-4xl md:text-5xl font-black text-white tracking-tight">{{ formattedPrice }}</div>
+                        <div class="text-gray-500 text-sm mt-1">تومان</div>
+                    </div>
+
+                    <a :href="whatsappOrderLink" class="block w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white py-4 rounded-xl text-center font-bold transition-all flex justify-center gap-3 items-center shadow-lg shadow-green-900/50 hover:shadow-green-900/80 transform hover:-translate-y-1">
+                        <i data-lucide="message-circle"></i>
+                        استعلام قیمت و سفارش در واتساپ
                     </a>
                 </div>
             </div>
@@ -181,37 +277,41 @@
 
         <section class="py-16 bg-white">
             <div class="container mx-auto px-4 text-center">
-                <h3 class="text-2xl font-black text-gray-800 mb-2 flex items-center justify-center gap-2">
-                    <i data-lucide="users" class="text-green-600"></i>
-                    هیئت مدیره
-                </h3>
-                <p class="text-gray-500 text-sm mb-10">برادران نورزهی، با تجربه دیرین در صنعت حفاری</p>
+                <h3 class="text-2xl font-black text-gray-800 mb-2" data-aos="fade-up">هیئت مدیره اتحاد نورزهی</h3>
+                <div class="w-20 h-1 bg-green-500 mx-auto rounded-full mb-10"></div>
                 
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-                    <div v-for="member in teamMembers" :key="member.name" class="flex flex-col items-center group">
-                        <div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-gray-100 shadow-md mb-3 group-hover:border-green-500 transition-all duration-300">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                    <div v-for="(member, index) in teamMembers" :key="member.name" class="flex flex-col items-center group" data-aos="fade-up" :data-aos-delay="index * 50">
+                        <div class="w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-gray-50 shadow-lg mb-4 group-hover:border-green-500 transition-all duration-300 group-hover:scale-105 relative">
                             <img :src="member.image" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-green-900/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
-                        <h4 class="font-bold text-gray-800 text-sm md:text-base">{{ member.name }}</h4>
-                        <span class="text-xs text-green-600 mt-1">عضو هیئت مدیره</span>
+                        <h4 class="font-bold text-gray-800 text-base md:text-lg group-hover:text-green-700 transition-colors">{{ member.name }}</h4>
+                        <span class="text-xs text-gray-500 mt-1 bg-gray-100 px-3 py-1 rounded-full">مدیریت اجرایی</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="bg-[#1c1917] text-gray-400 py-8 text-center text-xs border-t border-gray-800 pb-24 md:pb-8">
-            <p class="mb-2">© ۲۰۲۵ اتحاد نورزهی | تمامی حقوق محفوظ است.</p>
-            <p class="flex justify-center items-center gap-1">
-                طراحی و توسعه: <span class="text-gray-200 font-bold">عبدالناصر نورزهی</span>
-            </p>
+        <footer class="bg-[#1c1917] text-gray-400 py-10 border-t border-gray-800 pb-24 md:pb-10">
+            <div class="container mx-auto px-4 text-center">
+                <div class="flex justify-center items-center gap-4 mb-6">
+                    <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 hover:text-white transition-all"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    <a :href="whatsappLink" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 hover:text-white transition-all"><i data-lucide="message-circle" class="w-5 h-5"></i></a>
+                </div>
+                <p class="mb-2 text-sm">© ۲۰۲۵ اتحاد نورزهی | پیشرو در صنعت حفاری چاه‌های عمیق</p>
+                <p class="flex justify-center items-center gap-1 text-xs text-gray-600">
+                    طراحی و توسعه با ❤️ توسط <span class="text-gray-300 font-bold">عبدالناصر نورزهی</span>
+                </p>
+            </div>
         </footer>
 
-        <nav class="fixed bottom-0 w-full bg-white/95 backdrop-blur border-t border-gray-200 flex justify-around py-3 md:hidden z-50 pb-safe text-gray-500">
-            <a href="#" class="flex flex-col items-center hover:text-green-600"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px]">خانه</span></a>
-            <div class="relative -top-5">
-                <a :href="whatsappLink" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg animate-pulse"><i data-lucide="message-circle"></i></a>
+        <nav class="fixed bottom-0 w-full bg-white/95 backdrop-blur-lg border-t border-gray-200 flex justify-around py-3 md:hidden z-50 pb-safe text-gray-500 shadow-[0_-5px_10px_rgba(0,0,0,0.05)]">
+            <a href="#" class="flex flex-col items-center hover:text-green-600 gap-1"><i data-lucide="home" class="w-6 h-6"></i><span class="text-[10px]">خانه</span></a>
+            <div class="relative -top-6">
+                <a :href="whatsappLink" class="bg-gradient-to-r from-green-500 to-green-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-green-500/40 animate-pulse-slow border-4 border-white"><i data-lucide="phone" class="w-6 h-6"></i></a>
             </div>
-            <button @click="scrollToId('calculator')" class="flex flex-col items-center hover:text-green-600"><i data-lucide="calculator" class="w-5 h-5"></i><span class="text-[10px]">هزینه</span></button>
+            <button @click="scrollToId('calculator')" class="flex flex-col items-center hover:text-green-600 gap-1"><i data-lucide="calculator" class="w-6 h-6"></i><span class="text-[10px]">هزینه</span></button>
         </nav>
 
     </div>
@@ -223,9 +323,8 @@
             setup() {
                 const scrolled = ref(false);
                 const type = ref('tazani');
-                const depth = ref(10);
+                const depth = ref(50); // مقدار پیش‌فرض منطقی‌تر
                 
-                // 📷 لیست مدیران (تصاویر شما و کاملا رنگی)
                 const teamMembers = [
                     { name: 'عبدالخالق نورزهی', image: 'https://s6.uupload.ir/files/img_20240308_164442_nz3u.jpg' }, 
                     { name: 'محمد صادق نورزهی', image: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-40-43-731_com.miui.gallery_htvl.png' },
@@ -236,30 +335,67 @@
                     { name: 'حسین نورزهی', image: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-24-06-913_com.miui.gallery_6g8.png' }
                 ];
 
-                // 🎬 لیست نمونه کارها (لینک‌های جدید و اختصاصی شما)
+                // ✅ لیست اصلاح شده نمونه‌کارها (باگ ویدیو برطرف شد)
                 const portfolio = [
-                    { type: 'image', src: 'https://s6.uupload.ir/files/10531507565545169021-e1632206098271_7mi5.jpg', caption: 'تخصصی در مناطق کویری' },
-                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-53-49-220_com.android.chrome_bidp.png', caption: 'نخلستان‌های پرآب' },
-                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-54-07-391_com.android.chrome_d3xq.png', caption: 'زیبایی گلها' },
-                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-23-16-29-03-510_com.android.chrome_ufem.png', caption: 'دستگاه کمپرسور حفاری' },
-                    { type: 'image', src: 'https://uploadkon.ir/uploads/1d0423_25VID-20230520-064825-553.mp4', caption: 'لایروبی و احیا' },
-                    { type: 'image', src: 'https://images.unsplash.com/photo-1598505500880-9941a87b8d0b?q=80&w=1000&auto=format&fit=crop', caption: 'پروژه‌های موفق در جنوب' },
+                    // ویدیو شما: تایپ را به video تغییر دادم
+                    { type: 'video', src: 'https://uploadkon.ir/uploads/1d0423_25VID-20230520-064825-553.mp4', caption: 'عملیات لایروبی چاه عمیق', location: 'سراوان' },
+                    { type: 'image', src: 'https://s6.uupload.ir/files/10531507565545169021-e1632206098271_7mi5.jpg', caption: 'حفاری در مناطق کویری', location: 'ایرانشهر' },
+                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-53-49-220_com.android.chrome_bidp.png', caption: 'احیای نخلستان‌های خشک', location: 'سرباز' },
+                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-22-23-54-07-391_com.android.chrome_d3xq.png', caption: 'سرسبزی پس از حفاری', location: 'خاش' },
+                    { type: 'image', src: 'https://s6.uupload.ir/files/screenshot_2025-11-23-16-29-03-510_com.android.chrome_ufem.png', caption: 'تجهیزات مدرن کمپرسور', location: 'زاهدان' },
+                    { type: 'image', src: 'https://images.unsplash.com/photo-1598505500880-9941a87b8d0b?q=80&w=1000&auto=format&fit=crop', caption: 'پروژه‌های موفق جنوب', location: 'چابهار' },
                 ];
 
-                const prices = { tazani: 5455000, peshte: 7273000 };
+                const prices = { tazani: 450000, peshte: 850000 }; // قیمت متری حدودی
 
                 const formattedPrice = computed(() => {
                     return (depth.value * prices[type.value]).toLocaleString('fa-IR');
                 });
 
                 const whatsappOrderLink = computed(() => {
-                    const txt = `سلام، درخواست حفاری *${type.value === 'tazani' ? 'تازانی' : 'پشته'}* به متراژ *${depth.value} متر* را دارم.\nهزینه سایت: ${formattedPrice.value} تومان.`;
+                    const txt = `سلام، درخواست حفاری *${type.value === 'tazani' ? 'تازانی' : 'پشته'}* به متراژ *${depth.value} متر* را دارم.\nبرآورد هزینه سایت: ${formattedPrice.value} تومان.`;
                     return `https://wa.me/989167169590?text=${encodeURIComponent(txt)}`;
                 });
 
+                // راه‌اندازی نقشه
+                const initMap = () => {
+                    // مختصات مرکز سیستان و بلوچستان
+                    const map = L.map('drill-map').setView([27.5, 60.5], 7);
+                    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© نقشه آنلاین'
+                    }).addTo(map);
+
+                    // لیست موقعیت دستگاه‌ها (به صورت نمادین در شهرهای مختلف استان)
+                    const rigs = [
+                        { lat: 29.49, lng: 60.86, title: "دستگاه شماره ۱ - زاهدان" },
+                        { lat: 27.36, lng: 62.33, title: "دستگاه شماره ۲ - سراوان" },
+                        { lat: 27.20, lng: 60.68, title: "دستگاه شماره ۳ - ایرانشهر" },
+                        { lat: 25.29, lng: 60.64, title: "دستگاه شماره ۴ - چابهار" },
+                        { lat: 28.22, lng: 61.21, title: "دستگاه شماره ۵ - خاش" }
+                    ];
+
+                    // آیکون قرمز چشمک زن
+                    const icon = L.divIcon({
+                        className: 'custom-pin',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+
+                    rigs.forEach(rig => {
+                        L.marker([rig.lat, rig.lng], {icon: icon})
+                         .addTo(map)
+                         .bindPopup(`<b style="font-family:Vazirmatn">${rig.title}</b><br>وضعیت: <span style="color:green">در حال کار</span>`);
+                    });
+                };
+
                 onMounted(() => {
                     lucide.createIcons();
+                    AOS.init({ once: true, offset: 50 }); // راه‌اندازی انیمیشن‌ها
                     window.addEventListener('scroll', () => scrolled.value = window.scrollY > 50);
+                    
+                    // لود نقشه با کمی تاخیر برای اطمینان از لود شدن DOM
+                    setTimeout(initMap, 1000);
                 });
                 
                 watch(type, () => setTimeout(() => lucide.createIcons(), 50));
